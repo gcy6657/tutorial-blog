@@ -3,7 +3,7 @@ title: Claude 注册订阅相关经验分享
 description: 分享从注册全新 Gmail 账号到订阅 Claude Pro 的个人经验，包括网络环境、设备配置和手机支付流程。
 pubDate: 2026-10-29
 tags: [Claude, 注册, 订阅]
-draft: true
+
 ---
 
 > 【风险提示】本文仅为个人经验分享。海外服务风控动态多变，订阅请理性评估资金与封号风险，操作后果自担。
