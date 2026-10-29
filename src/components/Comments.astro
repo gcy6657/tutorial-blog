@@ -1,0 +1,47 @@
+---
+import { GISCUS } from '../config';
+
+const enabled = Boolean(GISCUS.repo && GISCUS.repoId && GISCUS.categoryId);
+---
+
+{enabled && (
+  <section class="comments">
+    <div
+      id="giscus-container"
+      data-repo={GISCUS.repo}
+      data-repo-id={GISCUS.repoId}
+      data-category={GISCUS.category}
+      data-category-id={GISCUS.categoryId}
+      data-mapping={GISCUS.mapping}
+      data-lang={GISCUS.lang}
+    ></div>
+  </section>
+)}
+
+<style>
+  .comments { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border); }
+</style>
+
+<script>
+  const container = document.getElementById('giscus-container');
+  if (container) {
+    const giscusTheme = () => (document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
+    const script = document.createElement('script');
+    script.src = 'https://giscus.app/client.js';
+    script.async = true;
+    script.crossOrigin = 'anonymous';
+    for (const [key, value] of Object.entries(container.dataset)) {
+      script.setAttribute(`data-${key.replace(/[A-Z]/g, (c) => '-' + c.toLowerCase())}`, value ?? '');
+    }
+    script.setAttribute('data-reactions-enabled', '1');
+    script.setAttribute('data-input-position', 'top');
+    script.setAttribute('data-loading', 'lazy');
+    script.setAttribute('data-theme', giscusTheme());
+    container.appendChild(script);
+
+    window.addEventListener('theme-change', () => {
+      const iframe = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame');
+      iframe?.contentWindow?.postMessage({ giscus: { setConfig: { theme: giscusTheme() } } }, 'https://giscus.app');
+    });
+  }
+</script>

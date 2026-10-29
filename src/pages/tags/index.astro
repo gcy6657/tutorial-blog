@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { collectTags, getPublishedPosts } from '../../utils/posts';
+
+const tags = collectTags(await getPublishedPosts());
+---
+
+<BaseLayout title="标签">
+  <h1>标签</h1>
+  {tags.size === 0 ? (
+    <p class="muted">暂无标签。</p>
+  ) : (
+    <div class="tag-cloud">
+      {[...tags.entries()].map(([tag, posts]) => (
+        <a class="tag" href={`/tags/${tag}/`}>#{tag} <span>{posts.length}</span></a>
+      ))}
+    </div>
+  )}
+</BaseLayout>
+
+<style>
+  .tag-cloud { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .tag { font-size: 1rem; padding: 0.15rem 0.75rem; }
+  .tag span { opacity: 0.7; font-size: 0.85em; }
+</style>

@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostList from '../components/PostList.astro';
+import { SITE } from '../config';
+import { getPublishedPosts } from '../utils/posts';
+
+const posts = await getPublishedPosts();
+---
+
+<BaseLayout>
+  <section class="intro">
+    <h1>{SITE.heading}</h1>
+    <p class="muted">{SITE.description}</p>
+  </section>
+  <h2>最新文章</h2>
+  {posts.length > 0 ? <PostList posts={posts.slice(0, 10)} /> : <p class="muted">还没有文章。</p>}
+  {posts.length > 10 && <p><a href="/archive/">查看全部 {posts.length} 篇 →</a></p>}
+</BaseLayout>
+
+<style>
+  .intro { margin: 1rem 0 2.5rem; }
+  .intro h1 { margin-bottom: 0.25rem; }
+  .intro p { margin: 0; }
+</style>

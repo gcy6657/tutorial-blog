@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../config';
+---
+
+<BaseLayout title="关于">
+  <h1>关于</h1>
+  <p>你好，我是{SITE.author}。</p>
+  <p>这里收集我写的教程，力求每一步都讲清楚，照着做就能成功。</p>
+  {SITE.social.length > 0 && (
+    <ul>
+      {SITE.social.map((s) => <li><a href={s.href} target="_blank" rel="noopener">{s.label}</a></li>)}
+    </ul>
+  )}
+</BaseLayout>

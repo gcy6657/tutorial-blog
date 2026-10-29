@@ -1,0 +1,72 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  headings: MarkdownHeading[];
+}
+
+const items = Astro.props.headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+
+{items.length >= 3 && (
+  <details class="toc" open>
+    <summary>目录</summary>
+    <ol>
+      {items.map((h) => (
+        <li class={`depth-${h.depth}`}><a href={`#${h.slug}`} data-slug={h.slug}>{h.text}</a></li>
+      ))}
+    </ol>
+  </details>
+)}
+
+<style>
+  .toc {
+    margin: 1.5rem 0;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--card-bg);
+    font-size: 0.92rem;
+  }
+  summary { cursor: pointer; font-weight: 600; color: var(--muted); }
+  ol { list-style: none; margin: 0.5rem 0 0; padding: 0; }
+  li { padding: 0.15rem 0; }
+  .depth-3 { padding-left: 1rem; }
+  a { color: var(--muted); display: block; border-left: 2px solid transparent; padding-left: 0.6rem; margin-left: -0.6rem; }
+  a:hover, a.active { color: var(--accent); text-decoration: none; }
+  a.active { border-left-color: var(--accent); }
+
+  /* 宽屏：目录固定在正文右侧 */
+  @media (min-width: 1240px) {
+    .toc {
+      position: fixed;
+      top: 120px;
+      left: calc(50% + var(--max-width) / 2 + 24px);
+      width: 220px;
+      max-height: calc(100vh - 180px);
+      overflow-y: auto;
+      margin: 0;
+      border: 0;
+      background: none;
+    }
+    summary { pointer-events: none; list-style: none; }
+    summary::-webkit-details-marker { display: none; }
+  }
+</style>
+
+<script>
+  // 高亮当前阅读到的小节
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('.toc a[data-slug]')];
+  const targets = links
+    .map((a) => document.getElementById(a.dataset.slug!))
+    .filter((el): el is HTMLElement => el !== null);
+  if (targets.length) {
+    const setActive = () => {
+      let current = targets[0];
+      for (const el of targets) if (el.getBoundingClientRect().top < 140) current = el;
+      links.forEach((a) => a.classList.toggle('active', a.dataset.slug === current.id));
+    };
+    window.addEventListener('scroll', setActive, { passive: true });
+    setActive();
+  }
+</script>

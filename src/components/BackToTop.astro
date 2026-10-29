@@ -1,0 +1,37 @@
+<button id="back-to-top" type="button" aria-label="回到顶部" title="回到顶部">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+</button>
+
+<style>
+  button {
+    position: fixed;
+    right: 20px;
+    bottom: 24px;
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--card-bg);
+    color: var(--muted);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px);
+    transition: opacity 0.2s, transform 0.2s, color 0.2s;
+  }
+  button.visible { opacity: 1; pointer-events: auto; transform: none; }
+  button:hover { color: var(--accent); border-color: var(--accent); }
+</style>
+
+<script>
+  const btn = document.getElementById('back-to-top');
+  if (btn) {
+    const update = () => btn.classList.toggle('visible', window.scrollY > 400);
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+    btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  }
+</script>

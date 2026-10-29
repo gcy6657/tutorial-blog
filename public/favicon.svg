@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 红苹果 -->
+  <rect width="128" height="128" rx="28" fill="#faf9f5"/>
+  <path d="M64 44C54 36 30 34 26 60C22 86 42 112 56 110C60 109 62 107 64 107C66 107 68 109 72 110C86 112 106 86 102 60C98 34 74 36 64 44Z" fill="#d1453b"/>
+  <path d="M64 44C64 34 66 26 70 20" stroke="#6b4a2f" stroke-width="6" stroke-linecap="round" fill="none"/>
+  <path d="M70 30C78 18 92 18 98 22C92 32 80 36 70 30Z" fill="#5a9a4a"/>
+</svg>

@@ -1,0 +1,11 @@
+// Cloudflare Worker 配置：纯静态网站，只上传 npm run build 生成的 dist/
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "tutorial-blog",
+  "compatibility_date": "2026-10-28",
+  "assets": {
+    "directory": "./dist",
+    // 找不到的页面显示 dist/404.html
+    "not_found_handling": "404-page"
+  }
+}

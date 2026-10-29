@@ -1,0 +1,30 @@
+---
+import { formatDate, type Post } from '../utils/posts';
+
+interface Props {
+  posts: Post[];
+}
+
+const { posts } = Astro.props;
+---
+
+<ul class="post-list">
+  {posts.map((post) => (
+    <li>
+      <a href={`/blog/${post.id}/`} class="title">{post.data.title}</a>
+      {post.data.draft && <span class="tag">草稿</span>}
+      <time class="muted" datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+      {post.data.description && <p class="muted">{post.data.description}</p>}
+    </li>
+  ))}
+</ul>
+
+<style>
+  .post-list { list-style: none; padding: 0; margin: 0; }
+  li { padding: 1rem 0; border-bottom: 1px solid var(--border); }
+  li:last-child { border-bottom: 0; }
+  .title { font-size: 1.15rem; font-weight: 600; color: var(--fg); margin-right: 0.5rem; }
+  .title:hover { color: var(--accent); }
+  time { display: block; font-size: 0.9rem; }
+  p { margin: 0.25rem 0 0; }
+</style>
