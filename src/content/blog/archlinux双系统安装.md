@@ -168,7 +168,7 @@ Arch 官方安装镜像**不支持安全启动**（Secure Boot），必须先关
 
 ### 2. 从硬盘里的安装盘启动
 
-1. 重启，开机时连按 **`F7`**（雷神部分机型是 `F12`，以实际为准）打开启动菜单。
+1. 重启，开机时连按 **`F12`** 打开启动菜单（我这台雷神 911X 是 F12，其他机型可能是 F7，以开机画面提示为准）。
 2. 选择 KIOXIA 硬盘对应的 **UEFI 启动项**。它的名字可能是 `UEFI OS (KIOXIA-EXCERIA PLUS G3 SSD)`、`ARCH_202611` 或者只显示硬盘型号，总之**不是 Windows Boot Manager** 的那个。
 3. 进入黑底的 Arch 启动菜单后，选第一项 `Arch Linux install medium (x86_64, UEFI)`，回车。
 
@@ -195,7 +195,7 @@ exit
 
 > `select disk 1` 之前务必用 `list disk` 确认 1 号盘是那块约 931G 的盘。改完后这个分区的盘符会消失，属于正常现象，文件都还在。
 
-再重启按 F7 试一次。
+再重启按 F12 试一次。
 
 ## 三、安装环境里的基础准备
 
@@ -547,9 +547,13 @@ EOF
 
 ```bash
 grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB
+grub-install --target=x86_64-efi --efi-directory=/efi --removable
 ```
 
-看到 `Installation finished. No error reported.` 就成功了。
+两条都看到 `Installation finished. No error reported.` 就成功了。
+
+- 第一条：把 GRUB 装到 `\EFI\GRUB\`，并在主板里注册一个叫 `GRUB` 的启动项。
+- 第二条：再复制一份到 `\EFI\BOOT\BOOTX64.EFI`。这是所有 UEFI 主板都认的默认路径，**专门防止主板不认第一条注册的启动项**（我这台雷神就是这样，见第十一章）。
 
 ### 2. 让 GRUB 识别 Windows
 
@@ -593,7 +597,9 @@ umount -R /mnt
 reboot
 ```
 
-重启时进 BIOS（F2），在 `Boot` 菜单里把 **GRUB** 调到第一位，保存退出。以后每次开机都会出现 GRUB 菜单，可以选 Arch Linux 或 Windows Boot Manager。
+重启时进 BIOS（F2），在 `Boot` 菜单里把 **GRUB**（或者 KIOXIA 硬盘，见下面的提示）调到第一位，保存退出。以后每次开机都会出现 GRUB 菜单，可以选 Arch Linux 或 Windows Boot Manager。
+
+> **BIOS 里找不到 GRUB，每次开机都要按 F12 手动选？** 这是很多笔记本 AMI BIOS 的通病，不是装错了。解决办法见[第十一章第 1 节](#1-bios-里没有-grub每次开机都要按-f12-手动选)。
 
 ## 九、重启之后：桌面、驱动、中文
 
@@ -949,11 +955,84 @@ snapper -c root list
 
 ## 十一、双系统日常和常见问题
 
-### 1. 开机直接进了 Windows，GRUB 菜单不见了
+### 1. BIOS 里没有 GRUB，每次开机都要按 F12 手动选
 
-Windows 大版本更新有时会把自己改回启动顺序的第一位。进 BIOS（F2）把 GRUB 调回第一位即可，也可以在 Linux 里用 `sudo efibootmgr` 查看并调整。
+这是我装完遇到的第一个问题：系统能正常进，但开机默认直接进 Windows。BIOS 的启动顺序里根本没有 GRUB 这一项，每次都得按 F12 打开启动菜单手动选。
 
-如果 BIOS 里根本没有 GRUB 这一项（个别主板会丢失启动项），从 F7 启动菜单进入 2G 的 ARCH_202611 安装环境，重新挂载并修复：
+原因是很多笔记本的 AMI BIOS 设置界面**不显示系统自己注册的启动项**，或者每块硬盘只显示一项。BIOS 界面里没有，不代表改不了。下面几种办法按顺序试，一般前两种就能解决。
+
+#### 办法一：用 efibootmgr 在 Linux 里直接改启动顺序
+
+不用进 BIOS，在 Linux 终端里运行：
+
+```bash
+efibootmgr
+```
+
+输出只有几行，类似这样：
+
+```text
+BootCurrent: 0003
+BootOrder: 0000,0003,0001
+Boot0000* Windows Boot Manager
+Boot0001* UEFI OS
+Boot0003* GRUB
+```
+
+`Boot` 后面那 4 位数字就是编号，`BootOrder` 是当前的启动顺序。把 GRUB 的编号放到最前面，其余的照抄原来的顺序：
+
+```bash
+sudo efibootmgr -o 0003,0000,0001
+```
+
+（数字换成你屏幕上的。）改完再运行一次 `efibootmgr`，确认 `BootOrder` 的第一个是 GRUB，然后重启。
+
+> 如果列表里根本没有 GRUB，可以手动注册一个（`-d` 是 KIOXIA 硬盘，`-p` 是 Linux EFI 分区的编号）：
+>
+> ```bash
+> sudo efibootmgr --create -d /dev/nvme1n1 -p 4 -L GRUB -l '\EFI\GRUB\grubx64.efi'
+> ```
+
+#### 办法二：用"保底" GRUB，在 BIOS 里选硬盘
+
+有的主板根本不认自己注册的启动项，重启后会把它忽略甚至删掉。这时就要用到第八章的第二条 `--removable` 命令。当时没装的话，现在补上：
+
+```bash
+sudo grub-install --target=x86_64-efi --efi-directory=/efi --removable
+sudo grub-mkconfig -o /boot/grub/grub.cfg
+```
+
+重启按 F2 进 BIOS，在 `Boot Option #1` 的下拉列表里找 KIOXIA 那块盘。名字可能是 `UEFI OS (KIOXIA...)`，也可能只显示硬盘型号 `KIOXIA-EXCERIA PLUS G3 SSD`。选它，F10 保存。主板会从这块硬盘的默认路径启动，也就是 GRUB。
+
+> 列表里有两个 KIOXIA 项时，可能有一个是 2G 的安装盘分区。选错了会进 Arch 安装环境，重启换另一个就行。
+
+#### 办法三：检查 BIOS 里的硬盘优先级子菜单
+
+AMI BIOS 的 Boot 页面通常**每块硬盘只显示一个启动项**。往下翻，看有没有 `UEFI NVME Drive BBS Priorities`、`Hard Drive BBS Priorities` 这类子菜单。有的话进去，把 KIOXIA 盘里的 GRUB 设成第一项，外面的 `Boot Option #1` 才会出现它。
+
+同一页还可以检查：
+- `Fast Boot` 改成 **Disabled**。开着它，有的主板会跳过对其他启动项的检测。
+- `CSM` / `Legacy` 保持 **Disabled**，只用 UEFI 模式。
+
+#### 办法四：Windows 每次开机都把自己改回第一位
+
+如果用办法一改好了，但只要进一次 Windows 就又变回去，那是 Windows 启动时把自己挪回了第一位。在 **Windows** 里用管理员命令提示符运行：
+
+```bat
+bcdedit /enum firmware
+```
+
+找到描述是 `GRUB` 的那一项，复制它的 `{...}` 标识符，然后：
+
+```bat
+bcdedit /set {fwbootmgr} displayorder {刚才复制的标识符} /addfirst
+```
+
+Windows 大版本更新后也可能改回来，再执行一次即可。
+
+#### 办法五：启动项丢了，从救援分区修复
+
+如果 GRUB 连 F12 菜单里都没有了，系统进不去，就从 F12 启动菜单进入 2G 的 ARCH_202611 安装环境，重新挂载并修复：
 
 ```bash
 mount -o subvol=@ /dev/nvme1n1p5 /mnt
@@ -966,7 +1045,7 @@ exit
 reboot
 ```
 
-第二条 `--removable` 会把 GRUB 额外放到一个所有主板都认的默认位置，作为保底。
+重启后再按办法一到办法三把 GRUB 设成默认启动。
 
 **这就是为什么建议保留那个 2G 分区**：它是一个永远在硬盘里的救援系统，不用 U 盘也能修。以后想换成新版本的安装环境，在 Windows 里把它清空，再复制一遍新的 ISO 内容就行（记得改卷标）。
 
