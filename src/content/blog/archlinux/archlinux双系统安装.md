@@ -2,6 +2,7 @@
 title: 没有 U 盘也能装：Arch Linux + Windows 11 双系统保姆级教程（KDE Plasma + Btrfs 快照）
 description: 不用 U 盘，把安装镜像放进硬盘分区直接启动，在第二块固态上给 Arch Linux 划出 300G，保留 Windows 11，装好 KDE Plasma、NVIDIA 驱动、中文输入法和可回滚的 Btrfs 快照。
 pubDate: 2026-11-10
+chapter: 1
 tags: [Linux, ArchLinux, 双系统]
 ---
 

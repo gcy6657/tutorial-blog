@@ -2,10 +2,11 @@
 title: Arch Linux 装软件保姆级教程：pacman、AUR、Flatpak 怎么选，QQ 微信 WPS、Steam 游戏、独显切换和 Claude 桌面端
 description: Arch 系列第四篇。讲清楚官方仓库、archlinuxcn、AUR、Flatpak 各适合装什么；QQ、微信、WPS、网易云等国产软件的现状和装法；Steam + Proton 玩 Windows 游戏；Intel + NVIDIA 混合显卡怎么让程序跑在独显上、怎么省电；最后在 Arch 上装好 Claude 桌面端。每一步都附上可能遇到的问题和解决办法。
 pubDate: 2026-11-11
+chapter: 4
 tags: [Linux, ArchLinux, 软件, 游戏]
 ---
 
-> 本文是 Arch 系列的第四篇，前三篇是[《没有 U 盘也能装：Arch Linux + Windows 11 双系统保姆级教程》](/blog/archlinux双系统安装/)、[《Arch Linux 美化保姆级教程》](/blog/archlinux美化/)和[《Linux 命令行基础保姆级教程》](/blog/linux基础教程/)。默认你的系统和第一篇装完时一样：**KDE Plasma 6.8（Wayland）+ fcitx5 + archlinuxcn 源和 paru + multilib 仓库 + `nvidia-open` + `nvidia-prime` + Btrfs 快照（snapper + snap-pac）**。本文基于 2026 年 11 月的软件版本编写，包名和版本号以后可能变化，以 `pacman -Si` / `paru -Si` 的查询结果为准。
+> 本文是 Arch 系列的第四篇，前三篇是[《没有 U 盘也能装：Arch Linux + Windows 11 双系统保姆级教程》](/series/archlinux/archlinux双系统安装/)、[《Arch Linux 美化保姆级教程》](/series/archlinux/archlinux美化/)和[《Linux 命令行基础保姆级教程》](/series/archlinux/linux基础教程/)。默认你的系统和第一篇装完时一样：**KDE Plasma 6.8（Wayland）+ fcitx5 + archlinuxcn 源和 paru + multilib 仓库 + `nvidia-open` + `nvidia-prime` + Btrfs 快照（snapper + snap-pac）**。本文基于 2026 年 11 月的软件版本编写，包名和版本号以后可能变化，以 `pacman -Si` / `paru -Si` 的查询结果为准。
 
 系统装好、美化完、命令行也会用了，接下来就是装软件。这一步劝退了不少新人：同一个 QQ，搜出来有 `linuxqq`、`linuxqq-nt-bwrap`、`linuxqq-appimage`、Flatpak 版好几个；装完微信打不了中文；WPS 打开全是英文还提示缺字体；Steam 游戏跑在核显上只有十几帧……
 

@@ -2,10 +2,11 @@
 title: Linux 命令行基础保姆级教程：装好 Arch 之后，从打开终端到写出第一个脚本
 description: 双系统和美化教程的配套篇。以装好的 Arch Linux + KDE Plasma 为实操环境，从终端和 Shell 讲起，覆盖目录结构、文件操作、vim 入门、用户与权限、pacman 软件包、进程与 systemd 服务、管道与重定向、查找、环境变量、压缩打包、磁盘、网络与 SSH，最后写出自己的第一个 Shell 脚本。
 pubDate: 2026-11-11
+chapter: 3
 tags: [Linux, ArchLinux, 命令行, 入门]
 ---
 
-> 本文是[《没有 U 盘也能装：Arch Linux + Windows 11 双系统保姆级教程》](/blog/archlinux双系统安装/)和[《Arch Linux 美化保姆级教程》](/blog/archlinux美化/)的配套篇。实操环境默认和前两篇装完时一样：**Arch Linux + KDE Plasma + Konsole 终端 + zsh（带美化篇里的 `.zshrc`）+ Btrfs 快照（snapper）+ paru**。没看过前两篇也没关系，绝大部分内容适用于任何 Linux 发行版，Arch 专属的地方会单独标出来。
+> 本文是[《没有 U 盘也能装：Arch Linux + Windows 11 双系统保姆级教程》](/series/archlinux/archlinux双系统安装/)和[《Arch Linux 美化保姆级教程》](/series/archlinux/archlinux美化/)的配套篇。实操环境默认和前两篇装完时一样：**Arch Linux + KDE Plasma + Konsole 终端 + zsh（带美化篇里的 `.zshrc`）+ Btrfs 快照（snapper）+ paru**。没看过前两篇也没关系，绝大部分内容适用于任何 Linux 发行版，Arch 专属的地方会单独标出来。
 
 装 Arch 的时候，我们照着教程敲了几百条命令；美化的时候，又改了一堆配置文件。但很多时候其实是"照着抄"，并不知道每条命令到底在干什么：`-Syu` 是什么意思？`sudo` 什么时候该加？`chmod +x` 改了什么？出了问题去哪看日志？
 

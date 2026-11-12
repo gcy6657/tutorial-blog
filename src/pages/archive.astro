@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getPublishedPosts, groupByYear } from '../utils/posts';
+import { getPublishedPosts, groupByYear, postUrl } from '../utils/posts';
 
 const posts = await getPublishedPosts();
 const years = groupByYear(posts);
@@ -18,7 +18,7 @@ const monthDay = (d: Date) =>
         {list.map((post) => (
           <li>
             <time class="muted" datetime={post.data.pubDate.toISOString()}>{monthDay(post.data.pubDate)}</time>
-            <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+            <a href={postUrl(post)}>{post.data.title}</a>
           </li>
         ))}
       </ul>

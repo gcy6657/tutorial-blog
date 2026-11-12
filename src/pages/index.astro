@@ -2,9 +2,9 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostList from '../components/PostList.astro';
 import { SITE } from '../config';
-import { getPublishedPosts } from '../utils/posts';
+import { formatDate, getAllSeries, getStandalonePosts, seriesUpdatedAt, seriesUrl } from '../utils/posts';
 
-const posts = await getPublishedPosts();
+const [allSeries, standalone] = await Promise.all([getAllSeries(), getStandalonePosts()]);
 ---
 
 <BaseLayout>
@@ -12,13 +12,48 @@ const posts = await getPublishedPosts();
     <h1>{SITE.heading}</h1>
     <p class="muted">{SITE.description}</p>
   </section>
-  <h2>最新文章</h2>
-  {posts.length > 0 ? <PostList posts={posts.slice(0, 10)} /> : <p class="muted">还没有文章。</p>}
-  {posts.length > 10 && <p><a href="/archive/">查看全部 {posts.length} 篇 →</a></p>}
+
+  <h2>系列教程</h2>
+  {allSeries.length > 0 ? (
+    <div class="series-grid">
+      {allSeries.map((series) => (
+        <a class="series-card" href={seriesUrl(series.entry.id)}>
+          <span class="title">{series.entry.data.title}</span>
+          <span class="desc muted">{series.entry.data.description}</span>
+          <span class="meta muted">共 {series.chapters.length} 章 · 更新于 {formatDate(seriesUpdatedAt(series))}</span>
+        </a>
+      ))}
+    </div>
+  ) : <p class="muted">还没有系列。</p>}
+
+  {standalone.length > 0 && (
+    <>
+      <h2>其他文章</h2>
+      <PostList posts={standalone} />
+    </>
+  )}
 </BaseLayout>
 
 <style>
   .intro { margin: 1rem 0 2.5rem; }
   .intro h1 { margin-bottom: 0.25rem; }
   .intro p { margin: 0; }
+  .series-grid { display: grid; gap: 1rem; margin-bottom: 2.5rem; }
+  .series-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 1.1rem 1.25rem;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 10px;
+    background: var(--card-bg);
+    color: var(--fg);
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .series-card:hover { border-color: var(--accent); text-decoration: none; transform: translateY(-2px); }
+  .series-card .title { font-size: 1.2rem; font-weight: 700; }
+  .series-card:hover .title { color: var(--accent); }
+  .series-card .desc { font-size: 0.95rem; }
+  .series-card .meta { font-size: 0.85rem; }
 </style>

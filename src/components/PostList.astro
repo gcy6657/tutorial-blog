@@ -1,5 +1,5 @@
 ---
-import { formatDate, type Post } from '../utils/posts';
+import { formatDate, postUrl, type Post } from '../utils/posts';
 
 interface Props {
   posts: Post[];
@@ -11,7 +11,7 @@ const { posts } = Astro.props;
 <ul class="post-list">
   {posts.map((post) => (
     <li>
-      <a href={`/blog/${post.id}/`} class="title">{post.data.title}</a>
+      <a href={postUrl(post)} class="title">{post.data.title}</a>
       {post.data.draft && <span class="tag">草稿</span>}
       <time class="muted" datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
       {post.data.description && <p class="muted">{post.data.description}</p>}

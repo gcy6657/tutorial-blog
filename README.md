@@ -13,7 +13,11 @@ npm run check    # 类型检查
 
 ## 写文章
 
-在 `src/content/blog/` 新建 `xxx.md`（或 `.mdx`），文件名即网址 `/blog/xxx/`：
+网站由「系列」和「单篇文章」组成：首页列出所有系列卡片，点进系列页是章节目录，点章节进入正文；不属于任何系列的文章列在首页下方的「其他文章」里。
+
+### 单篇文章
+
+在 `src/content/blog/` 根目录新建 `xxx.md`（或 `.mdx`），网址是 `/blog/xxx/`：
 
 ```yaml
 ---
@@ -26,6 +30,24 @@ draft: false              # true 时只在 npm run dev 中可见
 ---
 ```
 
+### 系列章节
+
+1. 新建系列：在 `src/content/series/` 新建 `<系列名>.md`，正文是系列页顶部的介绍：
+
+   ```yaml
+   ---
+   title: 系列标题
+   description: 首页卡片上显示的简介
+   order: 3        # 首页上的排列顺序，数字小的在前
+   ---
+   ```
+
+2. 写章节：在 `src/content/blog/<系列名>/` 新建 `xxx.md`，网址是 `/series/<系列名>/xxx/`。frontmatter 和单篇文章一样，再加一个 `chapter: 1` 表示第几章（决定章节顺序）。
+
+目录名必须和 `src/content/series/` 里的文件名一致，否则构建时会报错提醒。
+
+> 移动文章会改变它的网址。如果旧网址可能已经被别人收藏，在 `astro.config.mjs` 的 `redirects` 里加一条从旧地址到新地址的跳转。
+
 ## 想改界面，改哪里
 
 | 想改的东西 | 文件 |
@@ -35,9 +57,11 @@ draft: false              # true 时只在 npm run dev 中可见
 | 字体、字号、行距、页面宽度 | `src/styles/global.css` 里的 `html` 和 `--max-width` |
 | 顶部导航菜单（增删菜单项） | `src/layouts/BaseLayout.astro` 里的 `nav` 列表 |
 | 页头、页脚的布局 | `src/layouts/BaseLayout.astro` |
-| 首页的结构（如「最新文章」标题、显示几篇） | `src/pages/index.astro` |
+| 首页的结构（系列卡片、「其他文章」列表） | `src/pages/index.astro` |
+| 系列页（章节目录）的布局 | `src/pages/series/[series]/index.astro` |
+| 章节页里的「本系列」章节侧栏 | `src/components/SeriesNav.astro` |
 | 文章列表每一项长什么样 | `src/components/PostList.astro` |
-| 文章详情页的布局 | `src/layouts/PostLayout.astro` |
+| 文章 / 章节正文页的布局 | `src/layouts/PostLayout.astro` |
 | 关于页 / 归档页 / 标签页 / 404 页 | `src/pages/` 下对应的文件 |
 | 网站小图标 | 替换 `public/favicon.svg` |
 

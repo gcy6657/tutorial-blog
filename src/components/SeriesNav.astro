@@ -1,0 +1,77 @@
+---
+import { postUrl, seriesUrl, type Post, type Series } from '../utils/posts';
+
+interface Props {
+  series: Series;
+  current: Post;
+}
+
+const { series, current } = Astro.props;
+---
+
+<details class="series-nav">
+  <summary>本系列 · 共 {series.chapters.length} 章</summary>
+  <a class="series-title" href={seriesUrl(series.entry.id)}>{series.entry.data.title}</a>
+  <ol>
+    {series.chapters.map((chapter, i) => (
+      <li>
+        <a href={postUrl(chapter)} class:list={{ active: chapter.id === current.id }} aria-current={chapter.id === current.id ? 'page' : undefined}>
+          <span class="num">{i + 1}</span>
+          <span>{chapter.data.title}</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</details>
+
+<style>
+  .series-nav {
+    margin: 1.5rem 0 0;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--card-bg);
+    font-size: 0.92rem;
+  }
+  summary { cursor: pointer; font-weight: 600; color: var(--muted); }
+  .series-title { display: block; margin: 0.6rem 0 0.3rem; font-weight: 600; color: var(--fg); }
+  .series-title:hover { color: var(--accent); text-decoration: none; }
+  ol { list-style: none; margin: 0; padding: 0; }
+  li a {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.3rem 0.6rem;
+    margin-left: -0.6rem;
+    border-left: 2px solid transparent;
+    color: var(--muted);
+  }
+  li a:hover, li a.active { color: var(--accent); text-decoration: none; }
+  li a.active { border-left-color: var(--accent); font-weight: 600; }
+  .num { flex-shrink: 0; min-width: 1.2em; font-variant-numeric: tabular-nums; opacity: 0.7; }
+
+  /* 宽屏：章节目录固定在正文左侧，和右侧的本章目录对称 */
+  @media (min-width: 1240px) {
+    .series-nav {
+      position: fixed;
+      top: 120px;
+      right: calc(50% + var(--max-width) / 2 + 24px);
+      width: 220px;
+      max-height: calc(100vh - 180px);
+      overflow-y: auto;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: none;
+    }
+    summary { pointer-events: none; list-style: none; }
+    summary::-webkit-details-marker { display: none; }
+  }
+</style>
+
+<script>
+  // 宽屏下侧栏始终展开；窄屏下默认收起，避免挤占正文
+  const media = matchMedia('(min-width: 1240px)');
+  const sync = () => document.querySelectorAll<HTMLDetailsElement>('.series-nav').forEach((d) => (d.open = media.matches));
+  media.addEventListener('change', sync);
+  sync();
+</script>

@@ -2,10 +2,11 @@
 title: Arch Linux 美化保姆级教程：从开机画面到终端，KDE Plasma 全链路统一配色
 description: 双系统教程的续篇。在装好 KDE Plasma 的 Arch Linux 上，从 GRUB、开机动画、登录界面，到桌面主题、图标、光标、字体、面板 Dock、窗口特效，再到终端、输入法皮肤、GTK 和 Flatpak 程序，一步步美化成一套风格统一的系统。
 pubDate: 2026-11-11
+chapter: 2
 tags: [Linux, ArchLinux, KDE, 美化]
 ---
 
-> 本文是[《没有 U 盘也能装：Arch Linux + Windows 11 双系统保姆级教程》](/blog/archlinux双系统安装/)的续篇，默认你的系统和上一篇装完时一样：**KDE Plasma（Wayland 会话）+ Plasma Login Manager + GRUB + Btrfs 快照（snapper）+ fcitx5 + archlinuxcn 源和 paru**。本文基于 2026 年 11 月的 KDE Plasma 6.8 编写，界面文字和菜单位置在后续版本中可能有细微变化。
+> 本文是[《没有 U 盘也能装：Arch Linux + Windows 11 双系统保姆级教程》](/series/archlinux/archlinux双系统安装/)的续篇，默认你的系统和上一篇装完时一样：**KDE Plasma（Wayland 会话）+ Plasma Login Manager + GRUB + Btrfs 快照（snapper）+ fcitx5 + archlinuxcn 源和 paru**。本文基于 2026 年 11 月的 KDE Plasma 6.8 编写，界面文字和菜单位置在后续版本中可能有细微变化。
 
 刚装好的 KDE 其实已经挺好看了，但"好看"和"顺眼"之间还差很多细节：开机先是一闪而过的 GRUB 黑底白字，然后滚一屏内核日志；中文字体偶尔冒出日文字形；终端是默认的黑底白字；输入法候选框和桌面不是一个颜色；装个 GTK 程序又是另一种风格……
 

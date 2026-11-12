@@ -2,24 +2,35 @@
 import type { MarkdownHeading } from 'astro';
 import BaseLayout from './BaseLayout.astro';
 import Comments from '../components/Comments.astro';
+import SeriesNav from '../components/SeriesNav.astro';
 import TableOfContents from '../components/TableOfContents.astro';
-import { formatDate, readingStats, type Post } from '../utils/posts';
+import { formatDate, postUrl, readingStats, seriesUrl, type Post, type Series } from '../utils/posts';
 
 interface Props {
   post: Post;
   headings: MarkdownHeading[];
-  newer?: Post;
-  older?: Post;
+  prev?: Post;
+  next?: Post;
+  /** 章节所在的系列；单篇文章不传 */
+  series?: Series;
 }
 
-const { post, headings, newer, older } = Astro.props;
+const { post, headings, prev, next, series } = Astro.props;
 const { title, description, pubDate, updatedDate, tags } = post.data;
 const stats = readingStats(post.body);
+const chapterIndex = series ? series.chapters.findIndex((c) => c.id === post.id) + 1 : 0;
+const unit = series ? '章' : '篇';
 ---
 
 <BaseLayout title={title} description={description}>
   <article>
     <header>
+      {series && (
+        <p class="crumb">
+          <a href={seriesUrl(series.entry.id)}>{series.entry.data.title}</a>
+          <span class="muted"> · 第 {chapterIndex} 章</span>
+        </p>
+      )}
       <h1>{title}</h1>
       <p class="meta muted">
         <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
@@ -32,19 +43,20 @@ const stats = readingStats(post.body);
         </p>
       )}
     </header>
+    {series && <SeriesNav series={series} current={post} />}
     <TableOfContents headings={headings} />
     <div class="prose">
       <slot />
     </div>
   </article>
 
-  {(newer || older) && (
+  {(prev || next) && (
     <nav class="post-nav">
-      {older ? (
-        <a class="older" href={`/blog/${older.id}/`}><span class="muted">← 上一篇</span>{older.data.title}</a>
+      {prev ? (
+        <a class="prev" href={postUrl(prev)}><span class="muted">← 上一{unit}</span>{prev.data.title}</a>
       ) : <span />}
-      {newer && (
-        <a class="newer" href={`/blog/${newer.id}/`}><span class="muted">下一篇 →</span>{newer.data.title}</a>
+      {next && (
+        <a class="next" href={postUrl(next)}><span class="muted">下一{unit} →</span>{next.data.title}</a>
       )}
     </nav>
   )}
@@ -53,6 +65,7 @@ const stats = readingStats(post.body);
 </BaseLayout>
 
 <style>
+  .crumb { margin: 0 0 0.4rem; font-size: 0.95rem; }
   h1 { margin-bottom: 0.25rem; font-size: 2rem; }
   .meta { margin: 0; font-size: 0.95rem; }
   .tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.75rem 0 0; }
@@ -85,9 +98,9 @@ const stats = readingStats(post.body);
   }
   .post-nav a:hover { border-color: var(--accent); text-decoration: none; transform: translateY(-2px); }
   .post-nav span { font-size: 0.85rem; }
-  .newer { text-align: right; grid-column: 2; }
+  .next { text-align: right; grid-column: 2; }
   @media (max-width: 560px) {
     .post-nav { grid-template-columns: 1fr; }
-    .newer { grid-column: 1; }
+    .next { grid-column: 1; }
   }
 </style>
